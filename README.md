@@ -3,6 +3,15 @@
 What is AccessAudit?
 ====================
 
+AccessAudit is an extension to Linux instances to log all logins securely and tamperproof in an immutable database for audit and forensic purposes. All logins are logged with rich metadata  (IP, time, user, time etc.). A query tool is provided to query and serach the audit log in the database and export it. 
+
+AccessAudit allows server administrator, auditors etc. to provide a cryptographically strong, and tamperproof tally all accesses to their Linux instances. 
+
+
+How does AccessAudit Work?
+==========================
+
+
 AccessAudit is a script that will do the following for your local and remote Linux machines:
 
 1. Obtain the auditable and immutable database immudb in a container
