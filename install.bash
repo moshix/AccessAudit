@@ -104,19 +104,7 @@ echo " 2. Install it and create an audit database in it"
 echo " 3. Add to rsyslog.conf an additional logging of all logins to the audit database"
 echo " 4. Install a tool in /usr/local/bin which allows you to query the audit database"
 echo "${reset} "
-while true; do
-    read -p "${white} Do you want to continue the installation? (y/n) ${reset}" runvar
-
-    case "$runvar" in
-    [Yy]*)
-        echo "${yellow}Roger, cleaning it all up now... ${reset}"
-        start_install
-        ;;
-    [Nn]*)
-        echo "${yellow}Ok, terminating now....  ${reset}"
-        exit
-        ;;
-    *)
-        echo "${red}Unrecognized selection: $runvar. y or n  ${reset}" ;;
-    esac
-done
+    read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+echo "${reset}"
+# user said it's ok to download. get iso
+./scripts/getiso || exit 1
