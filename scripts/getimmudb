@@ -72,8 +72,10 @@ fi
 
 logit "immudb not yet present  - OK $(date)"
 
+# Alloate database directory locally for backups etc. 
+mkdir -p /opt/immudb/db/
 # get immudb container now
-$SUDO docker run --restart always --publish 3322:3322 -d  -it --rm --name immudb codenotary/immudb:latest || "${red}Catastrophic error. Exiting...${reset}"; exit 1
+$SUDO docker run --restart always --publish 3322:3322 -d  -v /opt/immudb/db:/var/lib/immudb --name immudb codenotary/immudb:latest || "${red}Catastrophic error. Exiting...${reset}"; exit 1
 
 # now let's check if immudb is running. 
 
