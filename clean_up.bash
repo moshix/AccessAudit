@@ -55,7 +55,8 @@ if [[ "$curdir"  != "AccessAudit" ]]; then
 fi
 
 
-echo "${yellow}Cleanup Procedure Version: $version${reset}"
+echo "${yellow}AccessAudit (c) 2022 v$version${reset}"
+echo "${yellow}Cleanup Procedure Version${reset}"
 echo  " "
 
 sleep 1
