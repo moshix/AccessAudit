@@ -72,6 +72,8 @@ check_os () {
         echo "${rev}${red}Unrecognized operating system. Exiting now.${reset}"
         exit 1
     fi
+    os=`awk -F= '/^NAME/{print $2}' /etc/os-release` # OS type is in $os !!
+
 }
 
 
@@ -93,11 +95,14 @@ mkdir -p logs/
 check_if_root # cannot be root
 logit "user invoking install script: $(whoami)"
 
+check_os  # $os will contain operating system (centos or ubuntu etc.)
 echo " "
 
 echo "${yellow}Welcome to AccessAudit Installer $version"
 echo "${yellow}===================================${reset}"
 echo "${yellow} "
+echo "Your operating system is: $os"
+echo " "
 echo "This installer will do the following: "
 echo " 1. Obtain the latest immudb container"
 echo " 2. Install it and create an audit database in it"
