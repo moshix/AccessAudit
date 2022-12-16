@@ -1,0 +1,32 @@
+#!/usr/bin/env bash                                                                                                                                  
+
+# Copyright 2022 by moshix
+# AccessAudit installer
+
+echo "getting immudb"
+logextension=`date "+%F-%T"`
+logit () {
+    # log to file all messages
+    logdate=`date "+%F-%T"`
+    echo "$logdate:$1" >> ./logs/startimmudb.log.$logextension
+}
+
+set_colors() {
+    red=`tput setaf 1`
+    green=`tput setaf 2`
+    yellow=`tput setaf 3`
+    blue=`tput setaf 4`
+    magenta=`tput setaf 5`
+    cyan=`tput setaf 6`
+    white=`tput setaf 7`
+    blink=`tput blink`
+    rev=`tput rev`
+    reset=`tput sgr0`
+}
+
+
+# main
+set_colors
+
+# command 
+docker run --restart always --publish 3322:3322 codenotary/immudb || echo "${red}Failed to start immudb. Catastrophic error! Exiting now ${reset}"; exit 1
