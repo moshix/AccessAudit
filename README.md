@@ -1,8 +1,5 @@
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fmoshix%2FAccessAudit&count_bg=%2379C83D&title_bg=%23555555&icon=microsoftsqlserver.svg&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
-Welcome to AccessAudit
-======================
-
 What is AccessAudit?
 ====================
 
@@ -18,14 +15,14 @@ Features
 
 | Feature                            | Supported          |
 | --------------------------         | ------------------ |
-| Debian/Ubuntu/Mint   n             | :white_check_mark: |  
+| Debian/Ubuntu/Mint/Arch            | :white_check_mark: |  
 | Red Hat/AlmaLinux/Rocky            | :white_check_mark: |  
-| Windows                            | :x:                |  
 | Obtains latest immudb              | :white_check_mark: |  
 | Enables auto-start of db at boot   | :white_check_mark: |  
 | Query tool with search for db      | :white_check_mark: |  
 | SSL support                        | :white_check_mark: |  
-| Teleportation support              | :x:                |
+| Windows                            | :x:                |  
+| Teleportation                      | :x:                |
 
   
 

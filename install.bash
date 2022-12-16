@@ -76,5 +76,15 @@ check_os () {
 
 
 #main here
+set_colors # to get terminal coloring settings
 
-
+echo "${white}Welcome to AccessAudit Installer $version"
+echo "${white}===================================${reset}"
+echo " "
+echo "This installer will do the following: "
+echo " 1. Obtain the latest immudb container"
+echo " 2. Install it and create an audit database in it"
+echo " 3. add to rsyslog.conf an additional logging of all logins to the audit database"
+echo " 4. Install a tool in /usr/local/bin which allows you to query the audit database"
+echo " "
+echo "${hellow}Please type Y to continue with this installation. Any other key to end ${reset}"
