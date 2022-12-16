@@ -104,7 +104,7 @@ echo " 2. Install it and create an audit database in it"
 echo " 3. Add to rsyslog.conf an additional logging of all logins to the audit database"
 echo " 4. Install a tool in /usr/local/bin which allows you to query the audit database"
 echo "${reset} "
-    read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+    read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || echo "${yellow}Bye${reset}"; exit 1
 echo "${reset}"
 # user said it's ok to download. get iso
-./scripts/getiso || exit 1
+./scripts/getimmudb || exit 1

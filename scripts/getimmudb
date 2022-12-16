@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+# Copyright 2022 by moshix
+# AccessAudit installer
+
+echo "getting immudb"
+logextension=`date "+%F-%T"`
+logit () {
+    # log to file all messages
+    logdate=`date "+%F-%T"`
+    echo "$logdate:$1" >> ./logs/getimmudb.log.$logextension
+}
+
+set_colors() {
+    red=`tput setaf 1`
+    green=`tput setaf 2`
+    yellow=`tput setaf 3`
+    blue=`tput setaf 4`
+    magenta=`tput setaf 5`
+    cyan=`tput setaf 6`
+    white=`tput setaf 7`
+    blink=`tput blink`
+    rev=`tput rev`
+    reset=`tput sgr0`
+}
+
+get_immudb () {
+    if command -v wget &> /dev/null
+    then
+        set -x
+        wget "$ubuntuURL"
+        set +x
+    elif command -v curl &> /dev/null
+    then
+        set -x
+        curl "$ubuntuURL" -o ./ubuntu-18.04.5-server-s390x.iso
+        set +x
+    fi
+}
+
+# main starts here
+
+set_colors
+
+# This script should be called from the main install script, which will
+# define $SUDO for us
+if [[ -z "$SUDO" ]]; then
+    echo "${rev}${red}The getimmudb script should only be called by the AccessAudit install script.${reset}"
+    exit 1
+fi
+
+# check if we have wget or curl installed
+foundtool="true"
+type wget &> /dev/null || type curl &> /dev/null || foundtool="false"
+if [[ $foundtool != "true" ]]; then
+    echo "${rev}${red}Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
+    exit 1
+fi
+
+#check if docker is present
+if [ -x "$(command -v docker)" ]; then
+    echo "Update docker"
+    # command
+else
+    echo "${red}AccessAudit requires Docker to be installed on your system. Please install docker and restart the install script${reset}"
+    # command
+fi
+
+# check if immudb is already installed
+if [ $( docker ps -a | grep immudb | wc -l ) -gt 0 ]; then
+  echo "${red}immudb is already installed. Start the configure script instead!${reset}"
+else
+  immudbexist=0
+fi
+
+# if the file does not exist or less than a seemingly full iso then get it
+minimumsize=635576192
+if [[ ! -f "$ubuntuISO" ]] || [[ $(wc -c < "$ubuntuISO") -lt $minimumsize ]]; then
+    echo "${yellow}Downloading Ubuntu 18.04 ISO from ${cyan}${ubuntuURL}${yellow}."
+    echo "This could take a few moments, depending on your internet speed... ${reset}"
+
+    logit "Download start at $(date)"
+    get_iso  #go get it
+else
+    echo "${yellow}You seem to have a downloaded iso file already. I will use it...${reset}"
+fi
+
+logit "Download finished at $(date)"
+
+if [ ! -f "$ubuntuISO" ]; then
+    echo "${rev}${red}Ubuntu ISO download failed. Bad internet connection? Terminating... ${reset}"
+    exit 1
+else
+    echo "${yellow}ISO is seemingly available now. Installation continues...${reset}"
+fi
+
+point=$(mktemp -d)
+$SUDO mount -o loop,ro $ubuntuISO $point
+
+mkdir -p install # create dir if not exist
+cp -r $point/* install/  # copy install DVD into install/ folder
+chmod -R +w install
+echo "${yellow}Ubuntu 18.04 was obtained, mounted and copied to install/ ...${reset}"
+$SUDO umount $point
+rmdir $point
+
+# sanity check if there is stuff in install/
+if [[ $(ls install | wc -l) -lt 10 ]]; then
+    echo "${rev}${red}Catastrophic error. Not enough files in install/. Either mount or download did not succeed in mysterious ways. Terminating...${reset}"
+    exit 1
+else
+    echo "${yellow}Download, mount, and copy of install DVD has succeeded...${reset}"
+fi
