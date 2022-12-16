@@ -31,7 +31,7 @@ Features
 | Query tool with search for db      | :white_check_mark: |  
 | SSL support                        | :white_check_mark: |  
 | Windows                            | :x:                |  
-| Solve world hunger                 | :x:                |
+| Extend to other event logging      | :x:                |
 
   
 
