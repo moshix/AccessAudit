@@ -49,16 +49,10 @@ if [[ -z "$SUDO" ]]; then
     exit 1
 fi
 
-# check if we have wget or curl installed
-foundtool="true"
-type wget &> /dev/null || type curl &> /dev/null || foundtool="false"
-if [[ $foundtool != "true" ]]; then
-    echo "${rev}${red}Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
-    exit 1
-fi
+logit "getimmudb with sudo - OK $(date)"
 
 #check if docker is present
-if [ -x "$(command -v docker)" ]; then
+if [ -x "$(command -v $SUDO docker)" ]; then
     echo "Update docker"
     # command
 else
@@ -66,48 +60,26 @@ else
     # command
 fi
 
+
+logit "Docker is present - OK $(date)"
+
 # check if immudb is already installed
-if [ $( docker ps -a | grep immudb | wc -l ) -gt 0 ]; then
+if [ $( $SUDO docker ps -a | grep immudb | wc -l ) -gt 0 ]; then
   echo "${red}immudb is already installed. Start the configure script instead!${reset}"
 else
   immudbexist=0
 fi
 
-# if the file does not exist or less than a seemingly full iso then get it
-minimumsize=635576192
-if [[ ! -f "$ubuntuISO" ]] || [[ $(wc -c < "$ubuntuISO") -lt $minimumsize ]]; then
-    echo "${yellow}Downloading Ubuntu 18.04 ISO from ${cyan}${ubuntuURL}${yellow}."
-    echo "This could take a few moments, depending on your internet speed... ${reset}"
+logit "immudb not yet present  - OK $(date)"
 
-    logit "Download start at $(date)"
-    get_iso  #go get it
+# get immudb container now
+$SUDO docker run --restart always -d --net host -it --rm --name immudb codenotary/immudb:latest
+
+# now let's check if immudb is running. 
+
+if [ $( $SUDO docker ps -a | grep immudb | wc -l ) -gt 0 ]; then
+  echo "${yellow}immudb is now  installed. Good!${reset}"
 else
-    echo "${yellow}You seem to have a downloaded iso file already. I will use it...${reset}"
-fi
-
-logit "Download finished at $(date)"
-
-if [ ! -f "$ubuntuISO" ]; then
-    echo "${rev}${red}Ubuntu ISO download failed. Bad internet connection? Terminating... ${reset}"
-    exit 1
-else
-    echo "${yellow}ISO is seemingly available now. Installation continues...${reset}"
-fi
-
-point=$(mktemp -d)
-$SUDO mount -o loop,ro $ubuntuISO $point
-
-mkdir -p install # create dir if not exist
-cp -r $point/* install/  # copy install DVD into install/ folder
-chmod -R +w install
-echo "${yellow}Ubuntu 18.04 was obtained, mounted and copied to install/ ...${reset}"
-$SUDO umount $point
-rmdir $point
-
-# sanity check if there is stuff in install/
-if [[ $(ls install | wc -l) -lt 10 ]]; then
-    echo "${rev}${red}Catastrophic error. Not enough files in install/. Either mount or download did not succeed in mysterious ways. Terminating...${reset}"
-    exit 1
-else
-    echo "${yellow}Download, mount, and copy of install DVD has succeeded...${reset}"
+  echo "${red}Oh no. Catastrophic error. We can't get immudb to run on Docker. Check the logs. ${reset}"
+  exit 1
 fi

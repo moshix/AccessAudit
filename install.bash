@@ -111,5 +111,14 @@ echo " 4. Install a tool in /usr/local/bin which allows you to query the audit d
 echo "${reset} "
     read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || echo "${yellow}Bye${reset}"; exit 1
 echo "${reset}"
+
+# check if we have wget or curl installed
+foundtool="true"
+type wget &> /dev/null || type curl &> /dev/null || foundtool="false"
+if [[ $foundtool != "true" ]]; then
+    echo "${rev}${red}Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
+    exit 1
+fi
+
 # user said it's ok to download. get iso
 ./scripts/getimmudb || exit 1
