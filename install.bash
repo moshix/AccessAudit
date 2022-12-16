@@ -35,7 +35,7 @@ set_colors() {
 test_sudo () {
 #    echo "${yellow}Testing if '$SUDO' command works ${reset}"
     if [[ $($SUDO id -u) -ne 0 ]]; then
-        echo "${rev}${red}$SUDO did not set us to uid 0; you must run this script with a user that has $SUDO privileges.${reset}"
+        echo "${rev}${red}🤔 $SUDO did not set us to uid 0; you must run this script with a user that has $SUDO privileges.${reset}"
         exit 1
     fi
 }
@@ -43,7 +43,7 @@ test_sudo () {
 check_if_root () {
     # check if I am root and terminate if so
     if [[ $(id -u) -eq 0 ]]; then
-        echo "${rev}${red}You are root. You must run this installer as a regular user. Terminating...${reset}"
+        echo "${rev}${red}🤔 You are root. You must run this installer as a regular user. Terminating...${reset}"
         exit 1
     fi
 }
@@ -60,16 +60,16 @@ check_os () {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         echo
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "${rev}${red}😬MacOS detected. Sorry, MacOS is not yet supported.${reset}"
+        echo "${rev}${red}😬 MacOS detected. Sorry, MacOS is not yet supported.${reset}"
         exit 1
     elif [[ "$OSTYPE" == "cygwin" ]]; then
-        echo "${rev}${red}😬Cygwin detected. Sorry, Cygwin is not supported.${reset}"
+        echo "${rev}${red}😬 Cygwin detected. Sorry, Cygwin is not supported.${reset}"
         exit 1
     elif [[ "$OSTYPE" == "win32" ]]; then
-        echo "${rev}${red}😬Windows detected. Sorry, Windows is not supported.${reset}"
+        echo "${rev}${red}😬 Windows detected. Sorry, Windows is not supported.${reset}"
         exit 1
     else
-        echo "${rev}${red}😬Unrecognized operating system. Exiting now.${reset}"
+        echo "${rev}${red}😬 Unrecognized operating system. Exiting now.${reset}"
         exit 1
     fi
     os=`awk -F= '/^NAME/{print $2}' /etc/os-release` # OS type is in $os !!
@@ -85,7 +85,7 @@ cpwd=`pwd`
 curdir=`basename "$cpwd"`
 
 if [[ "$curdir"  != "AccessAudit" ]]; then
-	echo "${rev}${red}😬This script needs to be executed from inside the AccessAudit directory. Please retry. ${red}"
+	echo "${rev}${red}😬 This script needs to be executed from inside the AccessAudit directory. Please retry. ${red}"
 	exit 1
 fi
 
@@ -116,7 +116,7 @@ echo "${reset}"
 foundtool="true"
 type wget &> /dev/null || type curl &> /dev/null || foundtool="false"
 if [[ $foundtool != "true" ]]; then
-    echo "${rev}${red}😬Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
+    echo "${rev}${red}😬 Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
     exit 1
 fi
 
