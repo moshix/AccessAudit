@@ -12,6 +12,7 @@
 # exported so scripts we call will also use this value. If you use "doas" you
 # may change it here.
 
+source ./Version
 
 SUDO="sudo"
 export SUDO
