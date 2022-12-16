@@ -17,7 +17,7 @@ AccessAudit is a script that will do the following for your local and remote Lin
 1. Obtain the auditable and immutable database immudb in a container
 2. Craete an 'audit' database in it
 3. Modify your rsyslog.conf so that all logins to your Linux instance will *also* be logged in the database
-4. Give you a tool to query and search the audit database for logins and related info 
+4. Gives you a query tool tosearch the audit database for logins and related info and export values in CSV 
 
 Features
 ========
