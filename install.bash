@@ -60,16 +60,16 @@ check_os () {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         echo
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "${rev}${red}MacOS detected. Sorry, MacOS is not yet supported.${reset}"
+        echo "${rev}${red}😬MacOS detected. Sorry, MacOS is not yet supported.${reset}"
         exit 1
     elif [[ "$OSTYPE" == "cygwin" ]]; then
-        echo "${rev}${red}Cygwin detected. Sorry, Cygwin is not supported.${reset}"
+        echo "${rev}${red}😬Cygwin detected. Sorry, Cygwin is not supported.${reset}"
         exit 1
     elif [[ "$OSTYPE" == "win32" ]]; then
-        echo "${rev}${red}Windows detected. Sorry, Windows is not supported.${reset}"
+        echo "${rev}${red}😬Windows detected. Sorry, Windows is not supported.${reset}"
         exit 1
     else
-        echo "${rev}${red}Unrecognized operating system. Exiting now.${reset}"
+        echo "${rev}${red}😬Unrecognized operating system. Exiting now.${reset}"
         exit 1
     fi
     os=`awk -F= '/^NAME/{print $2}' /etc/os-release` # OS type is in $os !!
@@ -85,7 +85,7 @@ cpwd=`pwd`
 curdir=`basename "$cpwd"`
 
 if [[ "$curdir"  != "AccessAudit" ]]; then
-	echo "${rev}${red}This script needs to be executed from inside the AccessAudit directory. Please retry. ${red}"
+	echo "${rev}${red}😬This script needs to be executed from inside the AccessAudit directory. Please retry. ${red}"
 	exit 1
 fi
 
@@ -116,9 +116,18 @@ echo "${reset}"
 foundtool="true"
 type wget &> /dev/null || type curl &> /dev/null || foundtool="false"
 if [[ $foundtool != "true" ]]; then
-    echo "${rev}${red}Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
+    echo "${rev}${red}😬Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
     exit 1
 fi
 
-# user said it's ok to download. get iso
+# user said it's ok to proceed with container installation
 ./scripts/getimmudb || exit 1
+./scripts/startimmudb || exit 1   # make sure immudb is running
+./scripts/createdb || exit 1      # create "audit" database in immudb
+./scripts/configrsyslog || exit 1 # configure rsyslog.conf
+./scripts/restartlog || exit 1    # restart log
+./scripts/testAA || exit 1        # test the whole thing
+./scripts/showquery || exit 1     # show example of query
+
+echo "${yellow}Installation finished! Congrats! 😀 ${reset}"
+

@@ -50,7 +50,7 @@ cpwd=`pwd`
 curdir=`basename "$cpwd"`
 
 if [[ "$curdir"  != "AccessAudit" ]]; then
-  echo "${rev}${red}This script needs to be executed from inside the AccessAudit directory. Please retry. ${red}"
+  echo "${rev}${red}😬This script needs to be executed from inside the AccessAudit directory. Please retry. ${red}"
   exit 1
 fi
 
