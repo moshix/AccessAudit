@@ -35,6 +35,28 @@ Features
 
   
 
+How To Install AccessAudit
+==========================
+
+1. Get the repo:
+> git clone git@github.com:moshix/AccessAudit.git
+
+2. Run the installation script
+> ./install.bash
+
+3. Use the query program:
+>accessaudit last 5 
+
+or
+
+>accessaudit search moshix
+  
+  
+If you experience problems during the install, check out the logs/ directory and then report an issue in this repo. 
+  
+  
+  
+
 
 
 Moshix  
