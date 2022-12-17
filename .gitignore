@@ -1,0 +1,4 @@
+# We don't want any files created by the installation process to show
+# as changes to git
+logs/*
+install_success
