@@ -78,8 +78,13 @@ check_os () {
 
 }
 
+exit_script () {
+ echo "${yellow}Bye${reset}"
+ exit 1
+}
 
 #main here
+logit "user invoking install script: $(whoami)"
 set_colors    # to get terminal coloring settings
 check_if_root # we dont' want to be root 
 test_sudo     # check if we have sudo
@@ -97,10 +102,7 @@ fi
 
 mkdir -p logs/
 
-check_if_root # cannot be root
-logit "user invoking install script: $(whoami)"
 
-check_os  # $os will contain operating system (centos or ubuntu etc.)
 echo " "
 
 echo "${yellow}Welcome to AccessAudit Installer $version"
@@ -115,7 +117,7 @@ echo " 3. Add to rsyslog.conf an additional logging of all logins to the audit d
 echo " 4. Install a tool in /usr/local/bin which allows you to query the audit database"
 
 echo "${reset} "
-    read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || echo "${yellow}Bye${reset}"; exit 1
+    read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit_script
 echo "${reset}"
 
 # check if we have wget or curl installed

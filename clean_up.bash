@@ -36,6 +36,8 @@ set_colors() {
 clean_stuff () {
     rm -fr install/
     rm -fr logs/*
+    rm -f immuclient*
+
 
     echo "${yellow}All clean now! Goodbye. ${reset}"
     exit 0

@@ -3,7 +3,8 @@
 # Copyright 2022 by moshix
 # AccessAudit installer
 
-echo "getting immudb"
+#echo "getting immudb"
+
 logextension=`date "+%F-%T"`
 logit () {
     # log to file all messages
@@ -24,22 +25,15 @@ set_colors() {
     reset=`tput sgr0`
 }
 
-get_immudb () {
-    if command -v wget &> /dev/null
-    then
-        set -x
-        wget "$ubuntuURL"
-        set +x
-    elif command -v curl &> /dev/null
-    then
-        set -x
-        curl "$ubuntuURL" -o ./ubuntu-18.04.5-server-s390x.iso
-        set +x
-    fi
+exit_with_error () {
+# exit but show error
+msg=$1
+echo "${red} Catastrophic error: $msg ${reset}"
+exit 1
 }
 
-# main starts here
 
+# main starts here
 set_colors
 
 # This script should be called from the main install script, which will
@@ -52,8 +46,8 @@ fi
 logit "getimmudb with sudo - OK $(date)"
 
 #check if docker is present
-if [ -x "$(command -v $SUDO docker)" ]; then
-    echo "Update docker"
+if [ -x "$(command -v docker)" ]; then
+    logit "Docker is installed - OK $(date)"
     # command
 else
     echo "${red}😬 AccessAudit requires Docker to be installed on your system. Please install docker and restart the install script${reset}"
@@ -61,19 +55,23 @@ else
 fi
 
 
+echo "${green}Docker is present in your system -  OK${reset}"
 logit "Docker is present - OK $(date)"
 
 # check if immudb is already installed
 if [ $( $SUDO docker ps -a | grep immudb | wc -l ) -gt 0 ]; then
   echo "${red}😬 immudb is already installed. Start the configure script instead!${reset}"
 else
+  echo "immudb not yet installed"
   immudbexist=0
+  logit "immudb not yet present  - OK $(date)"
 fi
-logit "immudb not yet present  - OK $(date)"
 
-# Alloate database directory locally for backups etc. 
-mkdir -p /opt/immudb/db/ || echo "${red}😬 Cannot allocate /opt/immudb/db for immmudb audit database. Exciting...${reset}"; exit 1
+
+# Allocate database directory locally for backups etc. 
+$SUDO mkdir -p /opt/immudb/db/ || exit_with_error "Cannot allocate /opt/immudb/db for immmudb audit database. Exciting..."
 logit "allocated /opt/immudb/db - OK $(date)"
+echo "${green} Audit database directory allocated in /opt/immudb/db ${reset}"
 
 # get immudb container now
 $SUDO docker run --restart always --publish 3322:3322 -d  -v /opt/immudb/db:/var/lib/immudb --name immudb codenotary/immudb:latest || "${red}Catastrophic error. Exiting...${reset}"; exit 1
@@ -81,7 +79,7 @@ logit "ran docker run codenotary/immudb - OK $(date)"
 
 # now let's check if immudb is running. 
 if [ $( $SUDO docker ps -a | grep immudb | wc -l ) -gt 0 ]; then
-  echo "${yellow}immudb is now  installed. Good!${reset}"
+  echo "${green}immudb is now  installed. Good!${reset}"
 else
   echo "${red}😬 Oh no. Catastrophic error. We can't get immudb to run on Docker. Check the logs. ${reset}"
   exit 1

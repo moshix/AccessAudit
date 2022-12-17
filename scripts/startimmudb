@@ -49,8 +49,9 @@ fi
 # obtain immuclient
 wget https://github.com/codenotary/immudb/releases/download/v1.4.1/immuclient-v1.4.1-linux-amd64-static || echo "${red}😬 Download of immuclient failed! Exiting...${reset}"; logit "immuclient download failed $(date)"; exit 1
 
-if test -f "immuclient-v1.4.1-linux-amd64-static"; then
+if [ -f "immuclient-v1.4.1-linux-amd64-static" ] ; then
 	logit "immuclient download complete - OK $(date)"
+	echo "${green} Obtained immuclient !! Yeah ${reset}"
 	mv immuclient-v1.4.1-linux-amd64-static immuclient
     else
         logit "immuclient download not complete!! $(date)"
@@ -58,6 +59,7 @@ if test -f "immuclient-v1.4.1-linux-amd64-static"; then
 	 exit 1
 fi
 
+	mv immuclient-v1.4.1-linux-amd64-static immuclient
+
 # now we have immudb running and immuclient installed
 
-exit 0
