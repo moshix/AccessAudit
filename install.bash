@@ -80,8 +80,10 @@ check_os () {
 
 
 #main here
-set_colors # to get terminal coloring settings
-
+set_colors    # to get terminal coloring settings
+check_if_root # we dont' want to be root 
+test_sudo     # check if we have sudo
+check_os      # find out what OS we are running on
 # are we running from the AccessAudit directory (instead of higher or lower directory?)
 cpwd=`pwd`
 curdir=`basename "$cpwd"`
