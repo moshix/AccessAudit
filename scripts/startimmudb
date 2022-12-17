@@ -3,7 +3,7 @@
 # Copyright 2022 by moshix
 # AccessAudit installer
 
-echo "getting immudb"
+echo "starting immudb and copying relevant files down"
 logextension=`date "+%F-%T"`
 logit () {
     # log to file all messages
@@ -27,10 +27,29 @@ set_colors() {
 
 # main
 set_colors
+# This script should be called from the main install script, which will
+# define $SUDO for us
+if [[ -z "$SUDO" ]]; then
+    echo "${rev}${red}😬 The startimmudb script should only be called by the AccessAudit install script.${reset}"
+    exit 1
+fi
 
-# command 
-[ ! "$(docker ps -a | grep <name>)" ] $SUDO docker run --restart always --publish 3322:3322 -d  -v /opt/immudb/db:/var/lib/immudb --name immudb codenotary/immudb:latest 
+# make sure immudb is running
+[ ! "$(docker ps -a | grep immudb)" ] $SUDO docker run --restart always --publish 3322:3322 -d  -v /opt/immudb/db:/var/lib/immudb --name immudb codenotary/immudb:latest 
 logit "start immudb - OK $(date)"
 
-# now copy immuclient from container into AccessAudit directory
-$SUDO docker cp codneotary/immudb:latest:/usr/local/bin/immuclient . 
+# obtain immuclient
+wget https://github.com/codenotary/immudb/releases/download/v1.4.1/immuclient-v1.4.1-linux-amd64-static || echo "${red}Download of immuclient failed! Exiting...${reset}"; logit "immuclient download failed $(date)"; exit 1
+
+if test -f "immuclient-v1.4.1-linux-amd64-static"; then
+	logit "immuclient download complete - OK $(date)"
+	mv immuclient-v1.4.1-linux-amd64-static immuclient
+    else
+        logit "immuclient download not complete!! $(date)"
+         echo "${red}Download of immuclient did not complete! check resons and restart install. Exiting...${reset}"	
+	 exit 1
+fi
+
+# now we have immudb running and immuclient installed
+
+exit 0
