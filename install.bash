@@ -138,6 +138,10 @@ fi
 ./scripts/showquery     || exit 1   # show example of query
 
 echo "${yellow}Installation finished! Congrats! 😀 ${reset}"
+echo " "
+echo "${yellow}Now try the accessaudit tool.     ${reset}"
+echo "${yellow}For example do this:              ${reset}"
+echo "${yellow}./accessaudit last 10             ${reset}"
 
 exit 0
 
