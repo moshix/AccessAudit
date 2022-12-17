@@ -29,4 +29,8 @@ set_colors() {
 set_colors
 
 # command 
-docker run --restart always --publish 3322:3322 codenotary/immudb || echo "${red}Failed to start immudb. Catastrophic error! Exiting now ${reset}"; exit 1
+[ ! "$(docker ps -a | grep <name>)" ] $SUDO docker run --restart always --publish 3322:3322 -d  -v /opt/immudb/db:/var/lib/immudb --name immudb codenotary/immudb:latest 
+logit "start immudb - OK $(date)"
+
+# now copy immuclient from container into AccessAudit directory
+$SUDO docker cp codneotary/immudb:latest:/usr/local/bin/immuclient . 
