@@ -78,6 +78,11 @@ check_os () {
 
 }
 
+exit_with_error () {
+msg=$1
+echo "${red}$msg${reset}"
+}
+
 exit_script () {
  echo "${yellow}Bye${reset}"
  exit 1
@@ -129,13 +134,13 @@ if [[ $foundtool != "true" ]]; then
 fi
 
 # user said it's ok to proceed with container installation
-./scripts/getimmudb     || exit 1   # install immudb container and start immudb
-./scripts/startimmudb   || exit 1   # make sure immudb is running
-./scripts/createdb      || exit 1   # create "audit" database in immudb
-./scripts/configrsyslog || exit 1   # configure rsyslog.conf
-./scripts/restartlog    || exit 1   # restart log
-./scripts/testAA        || exit 1   # test the whole thing
-./scripts/showquery     || exit 1   # show example of query
+./scripts/getimmudb     || exit_with_error "Getting immudb script failed somehow. Please check the logs"  # install immudb container and start immudb
+./scripts/startimmudb   || exit_with_error "Obtaining immudb client tools failed. Pls check logs"         # make sure immudb is running
+./scripts/createdb      || exit_with_error "Creation of the audit database failed. Please check the logs" # create "audit" database in immudb
+./scripts/configrsyslog || exit_with_error "Configuraiton of rsyslog failed. Pls check the logs"          # configure rsyslog.conf
+./scripts/restartlog    || exit_with_error "Could ot restart rsyslog. Pls check the logs"                 # restart log
+./scripts/testAA        || exit_with_error "One or some of the test failed. Please check the logs"        # test the whole thing
+./scripts/showquery     || exit_with_error "accessaudit query tool failed. Please check the logs"          # show example of query
 
 echo "${yellow}Installation finished! Congrats! 😀 ${reset}"
 echo " "
