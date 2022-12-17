@@ -38,8 +38,16 @@ fi
 [ ! "$(docker ps -a | grep immudb)" ] $SUDO docker run --restart always --publish 3322:3322 -d  -v /opt/immudb/db:/var/lib/immudb --name immudb codenotary/immudb:latest 
 logit "start immudb - OK $(date)"
 
+# check if wget is intalled
+if ! command -v wget &> /dev/null
+then
+    echo "${red}😬 wget command is not installed. Pls install wget and restart the install script. ${reset}"
+    logit "wget not installed!!1 $(date)"
+    exit 1
+fi
+
 # obtain immuclient
-wget https://github.com/codenotary/immudb/releases/download/v1.4.1/immuclient-v1.4.1-linux-amd64-static || echo "${red}Download of immuclient failed! Exiting...${reset}"; logit "immuclient download failed $(date)"; exit 1
+wget https://github.com/codenotary/immudb/releases/download/v1.4.1/immuclient-v1.4.1-linux-amd64-static || echo "${red}😬 Download of immuclient failed! Exiting...${reset}"; logit "immuclient download failed $(date)"; exit 1
 
 if test -f "immuclient-v1.4.1-linux-amd64-static"; then
 	logit "immuclient download complete - OK $(date)"
