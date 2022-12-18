@@ -31,7 +31,7 @@ Features
 | Query tool with search for db      | :white_check_mark: |  
 | SSL support                        | :white_check_mark: |  
 | Windows                            | :x:                |  
-| Extend to other event logging      | :x:                |
+| Extend to other event logging      | Soon               |
 
   
 
@@ -60,4 +60,4 @@ If you experience problems during the install, check out the logs/ directory and
 
 
 Moshix  
-December 16, 2022  
+December 18, 2022  
