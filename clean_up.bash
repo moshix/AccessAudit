@@ -37,6 +37,8 @@ clean_stuff () {
     rm -fr install/
     rm -fr logs/*
     rm -f immuclient*
+    sudo rm -rf /etc/accessaudit/
+    sudo rm -f /etc/rsyslog.d/99-immudb-vault.conf
 
 
     echo "${yellow}All clean now! Goodbye. ${reset}"
@@ -71,6 +73,8 @@ while true; do
     [Yy]*)
         echo "${yellow}Roger, cleaning it all up now... ${reset}"
         clean_stuff
+        echo "${yellow}Restart rsyslog... ${reset}"
+        sudo systemctl restart rsyslog
         ;;
     [Nn]*)
         echo "${yellow}Ok, terminating now....  ${reset}"

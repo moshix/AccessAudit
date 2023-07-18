@@ -26,3 +26,45 @@ set_colors() {
 
 #   *.* @your-server-hostname:3434
 
+if [ -z $1 ]; then
+    echo "You must provide immudb Vault API Key as first argument"
+    exit 1
+fi
+
+echo "Using Vault Key $1"
+
+mkdir -p /etc/accessaudit/
+cat > /etc/accessaudit/env <<EOF
+VAULT_API_KEY=$1
+VAULT_URL=https://vault.immudb.io/ics/api/v1/ledger/default/collection/default/document
+EOF
+
+cat > /usr/bin/forward-logs-to-vault.sh <<EOF
+#!/bin/bash
+source /etc/accessaudit/env
+while read line; do
+  curl -X 'PUT' "\$VAULT_URL"  -H 'accept: application/json' -H "X-API-Key: \$VAULT_API_KEY"   -H 'Content-Type: application/json'   -d "\$line"
+done
+EOF
+
+chmod +x /usr/bin/forward-logs-to-vault.sh
+
+
+cat > /etc/rsyslog.d/99-immudb-vault.conf <<EOF
+module(load="omprog")
+    
+template(name="json-template" type="list" option.jsonf="on") {
+    property(outname="@timestamp" name="timereported" dateFormat="rfc3339" format="jsonf")
+    property(outname="host" name="hostname" format="jsonf")
+    property(outname="severity" name="syslogseverity" caseConversion="upper" format="jsonf" datatype="number")
+    property(outname="facility" name="syslogfacility" format="jsonf" datatype="number")
+    property(outname="syslog-tag" name="syslogtag" format="jsonf")
+    property(outname="source" name="app-name" format="jsonf" onEmpty="null")
+    property(outname="message" name="msg" format="jsonf")
+}
+
+
+authpriv.* action(type="omprog"
+            binary="/usr/bin/forward-logs-to-vault.sh"
+            template="json-template")
+EOF
