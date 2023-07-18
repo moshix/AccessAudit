@@ -3,7 +3,7 @@
 What is AccessAudit?
 ====================
 
-AccessAudit is an extension to Linux instances to log all logins securely and tamperproof in an immutable database for audit and forensic purposes. All logins are logged with rich metadata  (IP, time, user, time etc.). A query tool is provided to query and serach the audit log in the database and export it. 
+AccessAudit is an extension to Linux instances to log all logins securely and tamperproof in in the immudb Vault immutable database for audit and forensic purposes. All logins are logged with rich metadata  (IP, time, user, time etc.). A query tool is provided to query and serach the audit log in the database and export it. 
 
 AccessAudit allows server administrator, auditors etc. to provide a cryptographically strong, and tamperproof tally all accesses to their Linux instances. 
 
@@ -11,13 +11,14 @@ AccessAudit allows server administrator, auditors etc. to provide a cryptographi
 How does AccessAudit Work?
 ==========================
 
+First, create an account on https://vault.immudb.io and obtian an API key there
+
 
 AccessAudit is a script that will do the following for your local and remote Linux machines:
 
-1. Obtain the auditable and immutable database immudb in a container
-2. Craete an 'audit' database in it
-3. Modify your rsyslog.conf so that all logins to your Linux instance will *also* be logged in the database
-4. Gives you a query tool tosearch the audit database for logins and related info and export values in CSV 
+
+3. Modify your rsyslog.conf so that all logins to your Linux instance will *also* be logged in  immudb Vault. They will also continue to be stored in your local system, of course. 
+4. Gives you a query tool to search immudb Vault for logins and related info and export values in CSV 
 
 Features
 ========
@@ -60,4 +61,4 @@ If you experience problems during the install, check out the logs/ directory and
 
 
 Moshix  
-December 18, 2022  
+July 18, 2022  
