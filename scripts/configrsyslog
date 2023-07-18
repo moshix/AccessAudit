@@ -53,15 +53,14 @@ chmod +x /usr/bin/forward-logs-to-vault.sh
 cat > /etc/rsyslog.d/99-immudb-vault.conf <<EOF
 module(load="omprog")
     
-template(name="json-template" type="list") {
-    constant(value="{")
-      constant(value="\"timestamp\":\"")     property(name="timereported" dateFormat="rfc3339")
-      constant(value="\",\"message\":\"")    property(name="msg" format="json")
-      constant(value="\",\"host\":\"")       property(name="hostname")
-      constant(value="\",\"severity\":\"")   property(name="syslogseverity-text")
-      constant(value="\",\"facility\":\"")   property(name="syslogfacility-text")
-      constant(value="\",\"syslogtag\":\"")  property(name="syslogtag")
-    constant(value="\"}\n")
+template(name="json-template" type="list" option.jsonf="on") {
+    property(outname="@timestamp" name="timereported" dateFormat="rfc3339" format="jsonf")
+    property(outname="host" name="hostname" format="jsonf")
+    property(outname="severity" name="syslogseverity" caseConversion="upper" format="jsonf" datatype="number")
+    property(outname="facility" name="syslogfacility" format="jsonf" datatype="number")
+    property(outname="syslog-tag" name="syslogtag" format="jsonf")
+    property(outname="source" name="app-name" format="jsonf" onEmpty="null")
+    property(outname="message" name="msg" format="jsonf")
 }
 
 
