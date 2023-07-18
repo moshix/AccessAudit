@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Copyright 2022 by moshix
 # AccessAudit installer
-#  1. obtains an immudb container
-#  2. create a database called 'audit' in it
-#  3. adds to rsylog.conf a line that makes all logs be *also* logged in the audit database
-#  4. provides query tool
+#  1. checks for all dependencies (curl, rsyslog)
+#  2. adds to rsylog.conf a line that makes all logs be *also* logged in the audit database
+#  3. provides query tool
 
 # v0.1 Humble beginnings
 # v0.2 Rough outline done. Refined visuals
 # v0.3 Sanity checks
+# v0.4 immudb Vault integration
 
 # This is the command we will use when we need superuser privileges. It is
 # exported so scripts we call will also use this value. If you use "doas" you
@@ -89,6 +89,7 @@ exit_script () {
 }
 
 #main here
+mkdir -p ./logs # ensuring logs folder
 logit "user invoking install script: $(whoami)"
 set_colors    # to get terminal coloring settings
 check_if_root # we dont' want to be root 
@@ -116,37 +117,43 @@ echo "${yellow} "
 echo "Your operating system is: $os"
 echo " "
 echo "This installer will do the following: "
-echo " 1. Obtain the latest immudb container"
-echo " 2. Install it and create an audit database in it"
-echo " 3. Add to rsyslog.conf an additional logging of all logins to the audit database"
-echo " 4. Install a tool in /usr/local/bin which allows you to query the audit database"
+echo " 1. Check for dependencies"
+echo " 2. Add to rsyslog.conf an additional logging of all logins to the immudb Vault"
+echo " IMPORTANT: AccessAudit will use default collection and default ledger"
 
 echo "${reset} "
     read -p "${white}Continue with installation (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit_script
 echo "${reset}"
 
+
+read -p "Enter immudb Vault Write API Key: " vaultKey
+
+echo "Testing your key with simple request..."
+
+vault_status_code=$(curl -w "%{http_code}" -X POST https://vault.immudb.io/ics/api/v1/ledger/default/collection/default/documents/count -H "X-API-KEY: $vaultKey" -d '{}' -H 'Content-Type: application/json' --silent --output /dev/null)
+echo "Vault status code was $vault_status_code"
+if [ "$vault_status_code" = "200" ]; then
+    echo "API key works. Proceed with installation"
+else   
+    echo "Standard API key check failed. Aborting installation."
+    exit 1
+fi
+
 # check if we have wget or curl installed
 foundtool="true"
-type wget &> /dev/null || type curl &> /dev/null || foundtool="false"
+type curl &> /dev/null || foundtool="false"
 if [[ $foundtool != "true" ]]; then
-    echo "${rev}${red}😬 Neither curl nor wget are available! Please install one now and restart the install script. ${reset}"
+    echo "${rev}${red}😬 curl is not available! Please install one now and restart the install script. ${reset}"
     exit 1
 fi
 
 # user said it's ok to proceed with container installation
-./scripts/getimmudb     || exit_with_error "Getting immudb script failed somehow. Please check the logs"  # install immudb container and start immudb
-./scripts/startimmudb   || exit_with_error "Obtaining immudb client tools failed. Pls check logs"         # make sure immudb is running
-./scripts/createdb      || exit_with_error "Creation of the audit database failed. Please check the logs" # create "audit" database in immudb
-./scripts/configrsyslog || exit_with_error "Configuraiton of rsyslog failed. Pls check the logs"          # configure rsyslog.conf
-./scripts/restartlog    || exit_with_error "Could ot restart rsyslog. Pls check the logs"                 # restart log
-./scripts/testAA        || exit_with_error "One or some of the test failed. Please check the logs"        # test the whole thing
-./scripts/showquery     || exit_with_error "accessaudit query tool failed. Please check the logs"          # show example of query
+$SUDO sh ./scripts/configrsyslog $vaultKey || exit_with_error "Configuration of rsyslog failed. Pls check the logs"          # configure rsyslog.conf
+$SUDO sh ./scripts/restartlog                    || exit_with_error "Could not restart rsyslog. Pls check the logs"                 # restart log
 
 echo "${yellow}Installation finished! Congrats! 😀 ${reset}"
 echo " "
-echo "${yellow}Now try the accessaudit tool.     ${reset}"
-echo "${yellow}For example do this:              ${reset}"
-echo "${yellow}./accessaudit last 10             ${reset}"
+echo "${yellow}Now check your immudb Vault dashboard! https://vault.immudb.io/     ${reset}"
 
 exit 0
 

@@ -3,7 +3,7 @@
 What is AccessAudit?
 ====================
 
-AccessAudit is an extension to Linux instances to log all logins securely and tamperproof in in the immudb Vault immutable database for audit and forensic purposes. All logins are logged with rich metadata  (IP, time, user, time etc.). A query tool is provided to query and serach the audit log in the database and export it. 
+AccessAudit is an extension to Linux instances to log all logins securely and tamperproof in in the immudb Vault immutable database for audit and forensic purposes. All logins are logged with rich metadata  (IP, time, user, time etc.).
 
 AccessAudit allows server administrator, auditors etc. to provide a cryptographically strong, and tamperproof tally all accesses to their Linux instances. 
 
@@ -11,14 +11,13 @@ AccessAudit allows server administrator, auditors etc. to provide a cryptographi
 How does AccessAudit Work?
 ==========================
 
-First, create an account on https://vault.immudb.io and obtian an API key there
+First, create an account on https://vault.immudb.io and obtain an API key there
 
 
 AccessAudit is a script that will do the following for your local and remote Linux machines:
 
 
-3. Modify your rsyslog.conf so that all logins to your Linux instance will *also* be logged in  immudb Vault. They will also continue to be stored in your local system, of course. 
-4. Gives you a query tool to search immudb Vault for logins and related info and export values in CSV 
+1. Modify your rsyslog.conf so that all logins to your Linux instance will *also* be logged in immudb Vault. They will also continue to be stored in your local system, of course. 
 
 Features
 ========
@@ -45,12 +44,8 @@ How To Install AccessAudit
 2. Run the installation script
 > ./install.bash
 
-3. Use the query program:
->accessaudit last 5 
-
-or
-
->accessaudit search moshix
+3. Check immudb Vault dashboard
+> https://vault.immudb.io/
   
   
 If you experience problems during the install, check out the logs/ directory and then report an issue in this repo. 
