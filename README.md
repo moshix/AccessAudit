@@ -11,7 +11,7 @@ AccessAudit allows server administrator, auditors etc. to provide a cryptographi
 How does AccessAudit Work?
 ==========================
 
-First, create an account on https://vault.immudb.io and obtian an API key there
+First, create an account on https://vault.immudb.io and obtain an API key there.
 
 
 AccessAudit is a script that will do the following for your local and remote Linux machines:
@@ -61,4 +61,4 @@ If you experience problems during the install, check out the logs/ directory and
 
 
 Moshix  
-July 18, 2022  
+July 18, 2024  
